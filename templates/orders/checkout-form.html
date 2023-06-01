@@ -1,0 +1,58 @@
+<div id="order" class="card mt-3 mb-3">
+    <div class="card-body">
+        <form>
+            <h1 class="text-secondary mb-3">payment</h1>
+            <div class="">
+                <label for="fullname" class="text-secondary">your name: </label>
+                <input type="text" class="form-control" id="fullname" placeholder="">
+            </div>
+            <div class="l">
+                <label for="email" class="text-secondary">email: </label>
+                <input type="email" class="form-control" id="email" placeholder="">
+            </div>
+            <div class=""> 
+                <label for="city" class="text-secondary">county/city:</label>
+                <input type="text" class="form-control" id="city" placeholder="Kazakhstan">
+            </div>
+            <div class="">
+                <label for="address" class="text-secondary">address:</label>
+                <input type="text" class="form-control" id="address" placeholder="">
+            </div>
+            <div class="">
+                <label for="phone" class="text-secondary">phone number:</label>
+                <input type="text" class="form-control" id="phone" placeholder="" maxlength="12">
+            </div>
+            <button class="btn btn-outline-secondary btn-lg mt-3" onclick="processOrder()">payment</button>
+        </form>
+    </div>
+</div>
+<script>
+    const processOrder = () => {
+
+        let full_name = document.getElementById('fullname').value;
+        let email = document.getElementById('email').value;
+        let city = document.getElementById('city').value;
+        let address = document.getElementById('address').value;
+        let phone = document.getElementById('phone').value;
+
+        let data = {
+            full_name: full_name,
+            email: email,
+            city: city,
+            address: address,
+            phone: phone,
+        }
+        fetch("{% url 'orders:process_order' %}", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {  "Content-type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": "{{csrf_token}}"}
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert('your order is accepted');
+            window.location.href = "{% url 'catalog:homePage' %}"
+        });
+    }
+
+</script>

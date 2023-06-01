@@ -1,0 +1,26 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}lobby{% endblock %}
+
+{% block content %}
+     <div class="main">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5">
+            <img class="w-100 anim-img" src="{% static './newstyle/images/main.webp' %}" alt="">
+          </div>
+          <div class="col-md-7">
+            <h1>paradoxe paris</h1>
+            <p>Paradoxe Paris was born from the collaboration of two enthusiastic people. Inspired by the underground trends of the 90s, we work on timeless pieces that are re-imagined through cuts, materials and volumes.
+              These are the foundations that shape the identity of the brand, and are perfected in each collection.
+              </p>
+            <p>This applies particularly to the pants, that we consider as a centerpiece of the contemporary wardrobe, with variations in colors, volumes and textures to match a wide diversity of styles.
+            </p>
+            <p>Paradoxe Paris’ wish is to be universal and for everyone to find the clothe that belongs to him and to feel unique while wearing it.
+              Each piece acts as a medium for his own style.</p>
+            <a href="{% url "catalog:store_home" %}" class="btn btn-secondary">shop now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

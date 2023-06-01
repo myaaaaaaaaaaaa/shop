@@ -1,0 +1,82 @@
+{% extends "../base.html" %}
+{% block title %}Себет{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="block">
+  <div class="navigator mb-3">
+      <div class="container">
+          <p><a href="{% url "catalog:homePage" %}" style='text-decoration: none'>lobby</a>/cart</p>
+      </div>
+  </div>
+
+
+<div class="container">
+  <h1 class="mb-3">cart</h1>
+  {% if cart|length == 0 %}
+  <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+    your cart is empty
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% else %}
+  <table class="table">
+      <thead>
+        <tr>
+          <th colspan="2">stuff</th>
+          <th>amount</th>
+          <th>price</th>
+          <th>checkout</th>
+          <th>action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart %}
+        <tr id="tr-{{item.product.id}}">
+          <td><img src="{{item.product.image.url}}" style="width: 200px;" alt=""></td>
+          <td>{{item.product.name}}</td>
+          <td>{{item.qty}}</td>
+          <td>€{{item.product.price}}EUR</td>
+          <td>€{{item.subtotal}}EUR</td>
+          <td><button onclick="deleteFromCart('{{item.product.id}}')" class="btn btn-danger">delete</button></td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+    <h3>checkout: €{{ cart.get_total }} EUR </h3>
+    {% include './checkout-form.html' %}
+    {% endif %}
+
+</div>
+</div>
+    
+{% else %}
+<div class="container mx-auto">
+    <div class="alert alert-error shadow-lg">
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <span>Тауарларды қарау үшін және оларға тапсырыс беру үшін, жүйеге тіркеліңіз немесе кіріңіз.</span>
+  </div>
+</div>
+</div>
+{% endif %}
+<script>
+    const deleteFromCart = (productId) => {
+        let data = {
+            product_id: productId
+        }
+
+        fetch("{% url 'orders:cart_delete' %}", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {  "Content-type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": "{{csrf_token}}"}
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("cart-qty").innerHTML = data.total_items;            
+            document.getElementById('tr-'+productId).remove();            
+        });
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "../base.html" %}
+{% load static %}
+{% load tailwind_filters %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="block">
+  <div class="navigator mb-2">
+    <div class="container">
+        <p><a href="#" style="text-decoration: none;">lobby</a>/log in</p>
+    </div>
+  </div>
+  <div class="container">
+      <div class="card">
+          <div class="card-body">
+              <h2 class="card-title mb-5" style="font-size: 32px;">log in</h2>
+              <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                  <p class="mb-5">if you don't have an account <a href="{% url "users:signUp" %}" class="link link-secondary">follow this link</a></p>
+                <button class="btn btn-secondary">log into account</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

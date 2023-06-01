@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="kz" data-theme="corporate">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static './newstyle/css/style.css' %}">
+  <link rel="stylesheet" href="{% static './newstyle/css/bootstrap.min(1).css' %}">
+  <!--<link rel="stylesheet" href="{% static './css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.3/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>-->
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+  <header class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">paradoxe</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
+        aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "catalog:homePage" %}">lobby</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "catalog:store_home" %}">products</a>
+          </li>
+          {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "users:loginPage" %}">account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "users:signUp" %}">registration</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            {% with cart_items=cart|length %}
+            <a class="nav-link" href="{% url 'orders:cart_summary' %}">cart({{ cart_items }})</a>
+            {% endwith %}
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+              aria-expanded="false">account{{user.username}}</a>
+            <div class="dropdown-menu">
+              {% if user.is_superuser %}
+              <a class="dropdown-item" href="{% url 'admin:index' %}">admin</a>
+              {% endif %}
+              <a class="dropdown-item" href="{% url 'users:logoutUser' %}">{{ user.username }}: log out</a>
+            </div>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </header>
+  {% block content %}
+  {% endblock %}
+  <script src="{% static './newstyle/js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    const addToCart = (productId) => {
+      let selectQuantity = document.getElementById('select-qty-' + productId);
+      let quantity = selectQuantity.value;
+
+      console.log("Se está seleccionando el producto: " + productId + " para añadirlo al carrito con: " + quantity +
+        " unid.");
+
+      let data = {
+        product_id: productId,
+        quantity
+      }
+
+      fetch("{% url 'orders:cart_add' %}", {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            "X-CSRFToken": "{{csrf_token}}"
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("cart-qty").innerHTML = data.total_items;
+        });
+    }
+  </script>
+</body>
+
+</html
